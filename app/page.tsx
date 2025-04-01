@@ -1,10 +1,10 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { useState, useEffect } from "react";
 import PlayEditor from "@/components/editor/PlayEditor";
 import { useCheckMission } from "@/components/customhooks/useCheckMission";
-
-export const runtime = 'edge';
 
 type GameState = "waiting" | "playing" | "clear" | "failed";
 
