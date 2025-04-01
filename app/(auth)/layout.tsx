@@ -1,5 +1,3 @@
-export const runtime = "edge";
-
 import Header from "@/components/layouts/Header";
 
 export default function RootAuthLayout({
