@@ -1,0 +1,9 @@
+import { SignUp } from '@clerk/nextjs'
+
+export const runtime = "edge";
+
+export default function Page() {
+  <div className="w-full min-h-screen flex items-center justify-center">
+      <SignUp fallbackRedirectUrl={"/home"} />
+    </div>
+}
