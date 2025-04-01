@@ -1,6 +1,14 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
+import { userCreate } from '@/utils/supabaseFunction'
+
+interface ClerkUser {
+  id: string | undefined;
+  username: string | null;
+  image_url: string | null;
+}
+
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET
@@ -47,11 +55,12 @@ export async function POST(req: Request) {
 
   // Do something with payload
   // For this guide, log payload to console
-  const { id } = evt.data
+  const { id, username, image_url} = evt.data as ClerkUser || {}
   const eventType = evt.type
 
   if (eventType === 'user.created') {
     console.log('userId:', id)
+    userCreate(id, username, image_url);
   }
   return new Response('Webhook received', { status: 200 })
 }
