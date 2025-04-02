@@ -63,6 +63,7 @@ useEffect(() => {
     if (time <= 0.1) {
       clearInterval(timer);
       const success = checkMission();
+      console.log("success");
       setGameState(success ? "clear" : "failed");
     }
   }, 100); // 0.1秒間隔で更新
