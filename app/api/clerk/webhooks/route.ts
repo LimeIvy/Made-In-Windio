@@ -59,7 +59,6 @@ export async function POST(req: Request) {
   const eventType = evt.type
 
   if (eventType === 'user.created') {
-    console.log('userId:', id)
     userCreate(id, username, image_url);
   }
   return new Response('Webhook received', { status: 200 })

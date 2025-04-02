@@ -3,16 +3,24 @@
 import { useState, useEffect } from "react";
 import PlayEditor from "@/components/editor/PlayEditor";
 import { useCheckMission } from "@/components/customhooks/useCheckMission";
+import { fetchMission } from "@/utils/supabaseFunction";
 
 type GameState = "waiting" | "playing" | "clear" | "failed";
 
+type Mission = {
+  name: string;
+  code: string;
+  difficulty: string;
+  clear_condition: string;
+};
+
 export default function Home() {
+  const [mission, setMission] = useState<Mission | null>(null);
   const [code, setCode] = useState<string>("<p class=\"text-black\">Start!</p>");
   const [gameState, setGameState] = useState<GameState>("waiting");
   const [timeLeft, setTimeLeft] = useState<number>(5);
   const [progress, setProgress] = useState<number>(100);
 
-  const mission = "文字を赤くしろ！";
 
   const getFullHTML = (bodyContent: string) => `
 <!DOCTYPE html>
@@ -25,16 +33,19 @@ export default function Home() {
 </body>
 </html>`;
 
-  const [output, setOutput] = useState(getFullHTML(code));
+  const [output, setOutput] = useState<string>("");
 
-  const checkMission = useCheckMission(output);
+  const checkMission = useCheckMission(output, mission?.clear_condition || "");
 
   // ゲーム開始
-  const startGame = () => {
+  const startGame = async () => {
     setGameState("playing");
     setTimeLeft(5);
     setProgress(100);
-    setCode("<p class=\"text-black\">Start!</p>");
+    const data = await fetchMission();
+    setMission(data);
+    setCode(data.code);
+    setOutput(getFullHTML(data.code));
   };
 
   // タイマーロジック
@@ -73,8 +84,8 @@ useEffect(() => {
         <div className="bg-primary-foreground p-4 rounded-lg mb-4 text-center">
           {gameState === "waiting" && (
             <div>
-              <h2 className="text-2xl font-bold mb-4 text-black">ミッション</h2>
-              <p className="text-xl mb-4 text-black">{mission}</p>
+              <h2 className="text-2xl font-bold mb-4 text-black">Mission</h2>
+              <p className="text-xl mb-4 text-black">{mission?.name || "Loading..."}</p>
               <button
                 onClick={startGame}
                 className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-black"
@@ -84,7 +95,7 @@ useEffect(() => {
             </div>
           )}
           {gameState === "playing" && (
-            <h2 className="text-2xl font-bold text-black">{mission}</h2>
+            <h2 className="text-2xl font-bold text-black">{mission?.name}</h2>
           )}
           {gameState === "clear" && (
             <div>

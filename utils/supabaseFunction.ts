@@ -12,3 +12,13 @@ export const userCreate = async (id: string | undefined, name: string | null, ic
     })
     .single();
 };
+
+export const fetchMission = async () => {
+  const { data, error } = await supabase
+    .from('missions')
+    .select('name, code, difficulty, clear_condition')
+    .limit(1)
+    .single();
+  if (error) throw error;
+  return data;
+};
